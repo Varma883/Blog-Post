@@ -33,7 +33,7 @@ const Login = () => {
       setError("");
       try {
         const response = await axios.post(
-          `${API_BASE_URL}/api/public/api/login`,
+          `${API_BASE_URL}/api/author/login`,
           {
             email: formData.email,
             password: formData.password,
@@ -63,7 +63,7 @@ if (response.data.status || response.data.token) {
       }
     };
   return (
-    <div className="min-h-screen  flex  justify-center items-center">
+    <div className="min-h-screen  flex  justify-center items-center  bg-gray-50">
       <div className="w-[90%]  md:w-[350px] h-[350px]  p-5 rounded-2xl bg-gray-100 shadow-xl">
         <div className="flex  justify-center items-center mb-4">
           <h1 className="text-xs lg:text-xl  font-sans font-medium">

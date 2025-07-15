@@ -7,6 +7,6 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(),tailwindcss()],
    define: {
-    global: {}, // <- This fixes the "global is not defined" error from fbjs/draft-js
+    
   },
 })

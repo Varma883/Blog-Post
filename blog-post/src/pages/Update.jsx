@@ -1,11 +1,7 @@
-import React, { useState } from "react";
-import { FaArrowLeft, FaRegPaperPlane } from "react-icons/fa";
-import { FiSave } from "react-icons/fi";
-import { Link } from "react-router-dom";
-import RichTextEditor from "../components/RichTextEditor";
+import React from 'react'
 
-const Create = () => {
-  const [formData, setFormData] = useState({
+const Update = () => {
+   const [formData, setFormData] = useState({
     title: "",
     content: "",
     author_id: "",
@@ -148,6 +144,6 @@ const Create = () => {
       </div>
     </div>
   );
-};
+}
 
-export default Create;
+export default Update

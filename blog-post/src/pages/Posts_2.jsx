@@ -1,13 +1,12 @@
-import React, { use, useState } from "react";
+import React, { useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const Posts = () => {
+const Posts_2 = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
-  const [isAutherOpen, setIsAutherOpen] = useState(false);
-  const navigate = useNavigate();
+    const [isAutherOpen, setIsAutherOpen] = useState(false);
 
   // Dummy data
   const posts = [
@@ -37,25 +36,8 @@ const Posts = () => {
     },
     {
       id: 4,
-      title: "Noteworthy technology acquisitions 2024 ",
+      title: "Noteworthy technology acquisitions 2021",
       status: "ARCHIVED",
-      author: "John Doe",
-      created: "2024-10-26",
-      updated: "2025-04-20",
-    },
-    {
-      id: 5,
-      title: "Noteworthy technology acquisitions 2024 ",
-      status: "ARCHIVED",
-      author: "John Doe",
-      created: "2024-10-26",
-      updated: "2025-04-20",
-    },
-
-    {
-      id: 6,
-      title: "Noteworthy technology acquisitions 2024 ",
-      status: "PUBLISHED",
       author: "John Doe",
       created: "2024-10-26",
       updated: "2025-04-20",
@@ -74,15 +56,11 @@ const Posts = () => {
         return "bg-gray-300";
     }
   };
-  const DisplayDeatils = (id) => {
-    console.log("Navigating to:", `/post/view/${id}`);
-    navigate("/post/view/" + id);
-  };
 
   return (
     <div className="w-full h-full bg-gray-50">
       {/* Header */}
-      <div className="flex justify-between items-center px-6 py-3 bg-white shadow-sm">
+      <div className="flex justify-between items-center px-6 py-2 bg-white shadow-sm">
         <h1 className="text-sm md:text-xl lg:text-2xl font-sans font-medium">
           Blog Post
         </h1>
@@ -94,6 +72,7 @@ const Posts = () => {
           Create New Post
         </Link>
       </div>
+
 
       <div className="p-3 mt-2">
         <div className="border border-gray-300 w-full p-4 rounded-2xl bg-gray-100">
@@ -166,7 +145,7 @@ const Posts = () => {
                     <ul className="py-2 text-sm text-gray-700">
                       <li>
                         <a
-                          href=""
+                          href="#"
                           className="block px-4 py-2 hover:bg-gray-100"
                         >
                           Published
@@ -259,22 +238,22 @@ const Posts = () => {
         </div>
       </div>
 
-      {/* flex flex-col md:flex-row flex-wrap gap-5 justify-center */}
+
+{/* flex flex-col md:flex-row flex-wrap gap-5 justify-center */}
       {/* Cards Grid */}
       <div className="p-5 flex flex-col gap-5 items-center ">
-        <div className="flex flex-col md:flex-row flex-wrap gap-5 justify-center lg:grid lg:grid-cols-2 lg:gap-4">
+        <div className="flex flex-col md:flex-row flex-wrap gap-5 justify-center lg:grid lg:grid-cols-2 lg:gap-4"> 
           {posts.map((post, index) => (
             <div
-              
               key={post.id}
-              className="w-full max-w-sm flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl "
+              className="w-full max-w-sm flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl hover:bg-gray-100"
             >
               <div className="flex flex-col justify-between p-4 leading-normal w-full">
                 {/* Title and status */}
                 <div className="flex justify-between items-start gap-4">
-                  <a href="#" onClick={() => DisplayDeatils(post.id)} className="mb-2 text-[15px] md:text-[18px] lg:text-xl font-bold tracking-tight text-black hover:text-blue-700">
+                  <h5 className="mb-2 text-[15px] md:text-[18px] lg:text-xl font-bold tracking-tight text-black">
                     {post.title}
-                  </a>
+                  </h5>
 
                   {/* Status and dots */}
                   <div className="flex items-center gap-3">
@@ -305,13 +284,12 @@ const Posts = () => {
                         <div className="absolute z-10 mt-2 right-0 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
                           <ul className="py-2 text-sm text-gray-700">
                             <li>
-                              <Link
-                                to={"/update"}
+                              <a
                                 href="#"
                                 className="block px-4 py-2 hover:bg-gray-100"
                               >
                                 Update
-                              </Link>
+                              </a>
                             </li>
                             <li>
                               <a
@@ -351,4 +329,4 @@ const Posts = () => {
   );
 };
 
-export default Posts;
+export default Posts_2;
