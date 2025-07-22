@@ -261,7 +261,7 @@ const Posts = () => {
 
       {/* flex flex-col md:flex-row flex-wrap gap-5 justify-center */}
       {/* Cards Grid */}
-      <div className="p-5 flex flex-col gap-5 items-center ">
+      <div className="p-5 flex flex-col gap-5 items-center mb-2 ">
         <div className="flex flex-col md:flex-row flex-wrap gap-5 justify-center lg:grid lg:grid-cols-2 lg:gap-4">
           {posts.map((post, index) => (
             <div
@@ -283,7 +283,7 @@ const Posts = () => {
                         post.status
                       )} rounded flex items-center justify-center w-[70px] h-[18px] text-[10px] sm:w-[80px] sm:h-[19px] sm:text-[11px] md:w-[90px] md:h-[20px] md:text-[13px]`}
                     >
-                      <p className="text-white">{post.status}</p>
+                      <p className="text-white">{post.status}</p>   
                     </div>
 
                     {/* Dropdown Button */}

@@ -9,12 +9,13 @@ const SignUp = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
-
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    password_confirmation: "",
+    mobile: "",
+    location: "",
+    services: "",
   });
 
   const handlechange = (e) => {
@@ -28,13 +29,9 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (formData.password !== formData.password_confirmation) {
-      toast.error("passwords do not match");
-      return;
-    }
     setIsSubmitting(true);
 
-    console.log(formData)
+    console.log(formData);
     try {
       const response = await axios.post(
         `${API_BASE_URL}/api/public/api/register`,
@@ -43,16 +40,19 @@ const SignUp = () => {
       if (response.data.token) {
         toast.success("Regestration is Succesfull!");
         //Stoaring the Auth Token
-        localStorage.setItem("authtoken", response.data.token);
+        const {token, user} = response.data;
+       // localStorage.setItem("authtoken", token); // Correct key
+        localStorage.setItem("user", JSON.stringify(user)); // storing the user
         console.log("Login response:", response.data);
-        navigate("/");
+        login(token, user); // This will store both token and user in AuthContext
+
       } else {
         toast.error(response.data.message || "Signup failed.");
       }
     } catch (error) {
       console.log("Validation Error:", error.response?.data);
       toast.error("An error occurred. Please try again.");
-    }finally {
+    } finally {
       setIsSubmitting(false);
     }
   };
@@ -67,44 +67,47 @@ const SignUp = () => {
           </div>
 
           <form className="mt-3" onSubmit={handleSubmit}>
-            <div className="mb-5">
-              <label
-                htmlFor="name"
-                className="block mb-2 text-sm font-medium text-gray-900"
-              >
-                User Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                value={formData.name}
-                onChange={handlechange}
-                className="bg-gray-100 border border-gray-200 text-gray-900 text-sm rounded-lg w-full p-2.5"
-                placeholder="JHON DOE"
-                required
-              />
-            </div>
-            <div className="mb-5">
-              <label
-                htmlFor="email"
-                className="block mb-2 text-sm font-medium text-gray-900"
-              >
-                Your email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handlechange}
-                className="bg-gray-100 border border-gray-200 text-gray-900 text-sm rounded-lg w-full p-2.5"
-                placeholder="youremailid@domain.com"
-                required
-              />
+            <div className="grid md:grid-cols-2 md:gap-6">
+              <div className="mb-5">
+                <label
+                  htmlFor="name"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  User Name
+                </label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  value={formData.name}
+                  onChange={handlechange}
+                  className="bg-gray-100 border border-gray-200 text-gray-900 text-sm rounded-lg w-full p-2.5"
+                  placeholder="JHON DOE"
+                  required
+                />
+              </div>
+              <div className="mb-5">
+                <label
+                  htmlFor="email"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Your email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handlechange}
+                  className="bg-gray-100 border border-gray-200 text-gray-900 text-sm rounded-lg w-full p-2.5"
+                  placeholder="youremailid@domain.com"
+                  required
+                />
+              </div>
             </div>
 
-            <div className="mb-5">
+           <div className="grid md:grid-cols-2 md:gap-6">
+             <div className="mb-5">
               <label
                 htmlFor="password"
                 className="block mb-2 text-sm font-medium text-gray-900"
@@ -124,20 +127,59 @@ const SignUp = () => {
 
             <div className="mb-5">
               <label
-                htmlFor="password_confirmation"
+                htmlFor="mobile"
                 className="block mb-2 text-sm font-medium text-gray-900"
               >
-                Confirm password
+                mobile
               </label>
               <input
-                type="password"
-                id="password_confirmation"
-                name="password_confirmation"
-                value={formData.password_confirmation}
+                type="tel"
+                id="mobile"
+                name="mobile"
+                value={formData.mobile}
                 onChange={handlechange}
+                placeholder="+9194949499"
                 className="bg-gray-100 border border-gray-200 text-black text-sm rounded-lg block w-full p-2.5"
                 required
               />
+            </div>
+           </div>
+            <div className="grid md:grid-cols-2 md:gap-6">
+              <div className="relative z-0 w-full mb-3 group">
+                <label
+                  htmlFor="location"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  Location
+                </label>
+                <input
+                  type="location"
+                  id="location"
+                  name="location"
+                  value={formData.location}
+                  onChange={handlechange}
+                  className="bg-gray-100 border border-gray-200 text-black text-sm rounded-lg block w-full p-2.5"
+                  required
+                />
+              </div>
+
+              <div className="relative z-0 w-full mb-3 group">
+                <label
+                  htmlFor="services"
+                  className="block mb-2 text-sm font-medium text-gray-900"
+                >
+                  services
+                </label>
+                <input
+                  type="services"
+                  id="services"
+                  name="services"
+                  value={formData.services}
+                  onChange={handlechange}
+                  className="bg-gray-100 border border-gray-200 text-black text-sm rounded-lg block w-full p-2.5"
+                  required
+                />
+              </div>
             </div>
 
             <div className="flex flex-col gap-3 items-center">

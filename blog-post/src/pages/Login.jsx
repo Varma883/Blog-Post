@@ -27,41 +27,48 @@ const Login = () => {
 
    const [error, setError] = useState("");
 
-    const handlelogin = async (e) => {
-      e.preventDefault();
-      setIsSubmitting(true);
-      setError("");
-      try {
-        const response = await axios.post(
-          `${API_BASE_URL}/api/author/login`,
-          {
-            email: formData.email,
-            password: formData.password,
-          }
-        );
-
-        //to store the token
-        console.log("Login API Response:", response.data);
-
-if (response.data.status || response.data.token) {
-  toast.success("Login successful");
-  localStorage.setItem("authToken", response.data.token);
+  //
 
 
-  login(response.data.token); // use context
-  navigate("/post", { replace: true });
-} else {
-  toast.error(response.data.message || "Login failed");
-}
-      } catch (error) {
-        toast.error(
-          error.response?.data?.message ||
-            "An error occurred during login. Please try again."
-        );
-      } finally {
-        setIsSubmitting(false);
+  const handlelogin = async (e) => {
+  e.preventDefault();
+  setIsSubmitting(true);
+  setError("");
+
+  const trimmedEmail = formData.email.trim();
+  const trimmedPassword = formData.password.trim();
+
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/api/public/api/login`,
+      {
+        email: trimmedEmail,
+        password: trimmedPassword,
       }
-    };
+    );
+
+    console.log("Login API Response:", response.data);
+
+    if (response.data.status || response.data.token) {
+      toast.success("Login successful");
+     
+      login(response.data.token, response.data.user);
+      navigate("/post", { replace: true });
+    } else {
+      toast.error(response.data.message || "Login failed");
+    }
+  } catch (error) {
+    console.error("Login Error:", error.response?.data);
+    toast.error(
+      error.response?.data?.message ||
+      JSON.stringify(error.response?.data?.errors) ||
+      "An error occurred during login. Please try again."
+    );
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
   return (
     <div className="min-h-screen  flex  justify-center items-center  bg-gray-50">
       <div className="w-[90%]  md:w-[350px] h-[350px]  p-5 rounded-2xl bg-gray-100 shadow-xl">

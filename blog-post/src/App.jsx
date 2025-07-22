@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import SignUp from './pages/SignUp';
 import ViewBlog from './pages/ViewBlog';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const App = () => {
   return (
@@ -16,11 +17,11 @@ const App = () => {
 
       <Routes>
         {/* Public routes */}
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<ProtectedRoute><SignUp /></ProtectedRoute> } />
 
         {/* Protected routes with Dashboard layout */}
-        <Route path="/" element={<Dashboard />}>
+        <Route path="/" element={ <ProtectedRoute><Dashboard /></ProtectedRoute>}>
           <Route path="post" element={<Posts />} />
           <Route path="post/view/:postid" element={<ViewBlog />} />
           <Route path="create" element={<Create />} />

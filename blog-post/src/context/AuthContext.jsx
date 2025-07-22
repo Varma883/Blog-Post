@@ -1,56 +1,61 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+// context/AuthContext.jsx
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-// we created a context
 const AuthContext = createContext();
 
-//we need to wrap the onbjesct to pass to the children files
+export const AuthProvider = ({ children }) => {
+  const [authToken, setauthToken] = useState(null);
+  const [user, setUser] = useState(null);
+  const [isAuthenticated, setisAuthenticated] = useState(false);
+  const [isLoading, setisLoading] = useState(true);
 
-export const AuthProvider = ({children})=>{
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    const userData = localStorage.getItem("user");
 
-    const [authToken, setauthToken] = useState(null);
-    const [isAuthenticated, setisAuthenticated] = useState(false);
-    const [isLoading, setisLoading]=useState(true);
-    const navigate = useNavigate();
-
-    useEffect(()=>{
-        const token = localStorage.getItem('authToken');
-        if(token){
-            setauthToken(token);
-            setisAuthenticated(true);
-        }
-        setisLoading(false)
-
-    } ,[]);
-
-    const login =(token) =>{
-        localStorage.setItem('authToken', token);
-        setauthToken(token);
-        setisAuthenticated(true);
-        navigate('/');
-    };
-
-    const logout =(token) =>{
-        localStorage.removeItem('authToken');
-        setauthToken(null);
-        setisAuthenticated(false)
-        navigate('/')
+    if (token && userData) {
+      setauthToken(token);
+      setUser(JSON.parse(userData));
+      setisAuthenticated(true);
+    } else {
+      setauthToken(null);
+      setUser(null);
+      setisAuthenticated(false);
     }
 
-      return (
-    <AuthContext.Provider value={{ 
-      authToken, 
-      isAuthenticated, 
-      isLoading, 
-      login, 
-      logout 
-    }}>
+    setisLoading(false);
+  }, []);
+
+  const login = (token, user) => {
+    localStorage.setItem("authToken", token);
+    localStorage.setItem("user", JSON.stringify(user));
+    setauthToken(token);
+    setUser(user);
+    setisAuthenticated(true);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("authToken");
+    localStorage.removeItem("user");
+    setauthToken(null);
+    setUser(null);
+    setisAuthenticated(false);
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        authToken,
+        user,
+        isAuthenticated,
+        isLoading,
+        login,
+        logout,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
-
-
-    
 };
 
 export const useAuth = () => useContext(AuthContext);
