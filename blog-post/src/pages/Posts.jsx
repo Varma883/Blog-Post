@@ -1,86 +1,52 @@
-import React, { use, useState } from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react"; // ✅ Removed 'use'
 import { FaPlus } from "react-icons/fa6";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
+import { API_BASE_URL } from "../utils/api";
+import { useAuth } from "../context/AuthContext"; // ✅ FIXED: You must import this
 
 const Posts = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isStatusOpen, setIsStatusOpen] = useState(false);
   const [isAutherOpen, setIsAutherOpen] = useState(false);
+  const [posts, setPosts] = useState([]); // ✅ Correct initialization
   const navigate = useNavigate();
+  const { user, authToken } = useAuth(); // ✅ Auth data available
 
-  // Dummy data
-  const posts = [
-    {
-      id: 1,
-      title: "Noteworthy technology acquisitions 2021",
-      status: "PUBLISHED",
-      author: "John Doe",
-      created: "2024-10-26",
-      updated: "2025-04-20",
-    },
-    {
-      id: 2,
-      title: "Noteworthy technology acquisitions 2021",
-      status: "DRAFT",
-      author: "John Doe",
-      created: "2024-10-26",
-      updated: "2025-04-20",
-    },
-    {
-      id: 3,
-      title: "Noteworthy technology acquisitions 2021",
-      status: "PUBLISHED",
-      author: "John Doe",
-      created: "2024-10-26",
-      updated: "2025-04-20",
-    },
-    {
-      id: 4,
-      title: "Noteworthy technology acquisitions 2024 ",
-      status: "ARCHIVED",
-      author: "John Doe",
-      created: "2024-10-26",
-      updated: "2025-04-20",
-    },
-    {
-      id: 5,
-      title: "Noteworthy technology acquisitions 2024 ",
-      status: "ARCHIVED",
-      author: "John Doe",
-      created: "2024-10-26",
-      updated: "2025-04-20",
-    },
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const response = await axios.get(`${API_BASE_URL}/api/public/api/posts`);
+        setPosts(response.data.data); 
+      } catch (error) {
+        console.error("Error fetching posts:", error);
+      }
+    };
 
-    {
-      id: 6,
-      title: "Noteworthy technology acquisitions 2024 ",
-      status: "PUBLISHED",
-      author: "John Doe",
-      created: "2024-10-26",
-      updated: "2025-04-20",
-    },
-  ];
+    fetchPosts();
+  }, []);
 
   const getStatusColor = (status) => {
     switch (status) {
-      case "PUBLISHED":
+      case "published":
         return "bg-green-500";
-      case "DRAFT":
+      case "draft":
         return "bg-gray-400";
-      case "ARCHIVED":
+      case "archived":
         return "bg-red-400";
       default:
         return "bg-gray-300";
     }
   };
+
   const DisplayDeatils = (id) => {
-    console.log("Navigating to:", `/post/view/${id}`);
     navigate("/post/view/" + id);
   };
 
   return (
-    <div className="w-full h-full bg-gray-50">
+
+    <><div className="w-full h-full bg-gray-50">
       {/* Header */}
       <div className="flex justify-between items-center px-6 py-3 bg-white shadow-sm">
         <h1 className="text-sm md:text-xl lg:text-2xl font-sans font-medium">
@@ -95,6 +61,7 @@ const Posts = () => {
         </Link>
       </div>
 
+      {/* Filters and Search */}
       <div className="p-3 mt-2">
         <div className="border border-gray-300 w-full p-4 rounded-2xl bg-gray-100">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -166,7 +133,7 @@ const Posts = () => {
                     <ul className="py-2 text-sm text-gray-700">
                       <li>
                         <a
-                          href=""
+                          href="#"
                           className="block px-4 py-2 hover:bg-gray-100"
                         >
                           Published
@@ -259,95 +226,94 @@ const Posts = () => {
         </div>
       </div>
 
-      {/* flex flex-col md:flex-row flex-wrap gap-5 justify-center */}
-      {/* Cards Grid */}
-      <div className="p-5 flex flex-col gap-5 items-center mb-2 ">
+      {/* Posts Grid */}
+      <div className="p-5 flex flex-col gap-5 items-center mb-2">
         <div className="flex flex-col md:flex-row flex-wrap gap-5 justify-center lg:grid lg:grid-cols-2 lg:gap-4">
-          {posts.map((post, index) => (
-            <div
-              
-              key={post.id}
-              className="w-full max-w-sm flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl "
-            >
-              <div className="flex flex-col justify-between p-4 leading-normal w-full">
-                {/* Title and status */}
-                <div className="flex justify-between items-start gap-4">
-                  <a href="#" onClick={() => DisplayDeatils(post.id)} className="mb-2 text-[15px] md:text-[18px] lg:text-xl font-bold tracking-tight text-black hover:text-blue-700">
-                    {post.title}
-                  </a>
-
-                  {/* Status and dots */}
-                  <div className="flex items-center gap-3">
-                    <div
-                      className={`${getStatusColor(
-                        post.status
-                      )} rounded flex items-center justify-center w-[70px] h-[18px] text-[10px] sm:w-[80px] sm:h-[19px] sm:text-[11px] md:w-[90px] md:h-[20px] md:text-[13px]`}
+          {Array.isArray(posts) && posts.length > 0 ? ( // ✅ Null safety
+            posts.map((post, index) => (
+              <div
+                key={post.id}
+                className="w-full max-w-sm flex flex-col items-center bg-white border border-gray-200 rounded-lg shadow-sm md:flex-row md:max-w-xl"
+              >
+                <div className="flex flex-col justify-between p-4 leading-normal w-full">
+                  {/* Title and status */}
+                  <div className="flex justify-between items-start gap-4">
+                    <a
+                      href="#"
+                      onClick={() => DisplayDeatils(post.id)}
+                      className="mb-2 text-[15px] md:text-[18px] lg:text-xl font-bold tracking-tight text-black hover:text-blue-700"
                     >
-                      <p className="text-white">{post.status}</p>   
-                    </div>
+                      {post.title}
+                    </a>
 
-                    {/* Dropdown Button */}
-                    <div className="relative inline-block text-left">
-                      <button
-                        onClick={() =>
-                          setActiveDropdown(
-                            activeDropdown === index ? null : index
-                          )
-                        }
-                        className="inline-flex items-center p-2 text-sm font-medium text-center hover:bg-gray-50 rounded"
-                        type="button"
+                    <div className="flex items-center gap-3">
+                      <div
+                        className={`${getStatusColor(
+                          post.status
+                        )} rounded flex items-center justify-center w-[70px] h-[18px] text-[10px] sm:w-[80px] sm:h-[19px] sm:text-[11px] md:w-[90px] md:h-[20px] md:text-[13px]`}
                       >
-                        <HiOutlineDotsHorizontal className="w-5 h-5" />
-                      </button>
+                        <p className="text-white">{post.status}</p>
+                      </div>
 
                       {/* Dropdown Menu */}
-                      {activeDropdown === index && (
-                        <div className="absolute z-10 mt-2 right-0 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
-                          <ul className="py-2 text-sm text-gray-700">
-                            <li>
-                              <Link
-                                to={"/update"}
-                                href="#"
-                                className="block px-4 py-2 hover:bg-gray-100"
-                              >
-                                Update
-                              </Link>
-                            </li>
-                            <li>
-                              <a
-                                href="#"
-                                className="block px-4 py-2 hover:bg-gray-100"
-                              >
-                                Archive
-                              </a>
-                            </li>
-                            <li>
-                              <a
-                                href="#"
-                                className="block px-4 py-2 hover:bg-gray-100"
-                              >
-                                Delete
-                              </a>
-                            </li>
-                          </ul>
-                        </div>
-                      )}
+                      <div className="relative inline-block text-left">
+                        <button
+                          onClick={() =>
+                            setActiveDropdown(activeDropdown === index ? null : index)
+                          }
+                          className="inline-flex items-center p-2 text-sm font-medium text-center hover:bg-gray-50 rounded"
+                        >
+                          <HiOutlineDotsHorizontal className="w-5 h-5" />
+                        </button>
+
+                        {activeDropdown === index && (
+                          <div className="absolute z-10 mt-2 right-0 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44">
+                            <ul className="py-2 text-sm text-gray-700">
+                              <li>
+                                <Link
+                                  to={"/update"}
+                                  className="block px-4 py-2 hover:bg-gray-100"
+                                >
+                                  Update
+                                </Link>
+                              </li>
+                              <li>
+                                <a className="block px-4 py-2 hover:bg-gray-100">Archive</a>
+                              </li>
+                              <li>
+                                <a className="block px-4 py-2 hover:bg-gray-100">Delete</a>
+                              </li>
+                            </ul>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Footer Info */}
-                <div className="mt-3 font-normal text-gray-400 text-[9px] md:text-[10px] lg:text-xs flex items-center gap-5">
-                  <p>By {post.author}</p>
-                  <p>Created: {post.created}</p>
-                  <p>Updated: {post.updated}</p>
+                  {/* Footer Info */}
+                  <div className="mt-3 font-normal text-gray-400 text-[9px] md:text-[10px] lg:text-xs flex items-center gap-5">
+                    <p>By {post.author || "Unknown Author"}</p> {/* ✅ FIXED */}
+                    <p>Created: {new Date(post.created_at).toLocaleDateString()}</p>
+                    <p>Updated: {new Date(post.updated_at).toLocaleDateString()}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <p className="text-gray-400">No posts found.</p>
+          )}
         </div>
       </div>
+
+
+      
     </div>
+    
+    
+   
+    
+    </>
+    
   );
 };
 

@@ -7,7 +7,7 @@ const Dashboard = () => {
     <div className="flex h-screen">
       <Sidebar />
       <main className="flex-1 overflow-auto">
-        <Outlet /> {/* Render child routes like /post, /create here */}
+        <Outlet /> {/* Nested routes like /post, /create, etc. */}
       </main>
     </div>
   );

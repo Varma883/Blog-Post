@@ -1,45 +1,41 @@
-// context/AuthContext.jsx
+// ✅ FIXED AuthContext.jsx
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [authToken, setauthToken] = useState(null);
+  const [authToken, setAuthToken] = useState(null);
   const [user, setUser] = useState(null);
-  const [isAuthenticated, setisAuthenticated] = useState(false);
-  const [isLoading, setisLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const token = localStorage.getItem("authToken");
-    const userData = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("authToken");
+    const storedUser = localStorage.getItem("user");
 
-    if (token && userData) {
-      setauthToken(token);
-      setUser(JSON.parse(userData));
-      setisAuthenticated(true);
-    } else {
-      setauthToken(null);
-      setUser(null);
-      setisAuthenticated(false);
+    if (storedToken && storedUser) {
+      setAuthToken(storedToken);
+      setUser(JSON.parse(storedUser));
+      setIsAuthenticated(true);
     }
 
-    setisLoading(false);
+    setIsLoading(false);
   }, []);
 
   const login = (token, user) => {
     localStorage.setItem("authToken", token);
     localStorage.setItem("user", JSON.stringify(user));
-    setauthToken(token);
+    setAuthToken(token);
     setUser(user);
-    setisAuthenticated(true);
+    setIsAuthenticated(true);
   };
 
   const logout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("user");
-    setauthToken(null);
+    setAuthToken(null);
     setUser(null);
-    setisAuthenticated(false);
+    setIsAuthenticated(false);
   };
 
   return (
