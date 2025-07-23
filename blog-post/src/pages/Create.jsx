@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaArrowLeft, FaRegPaperPlane } from "react-icons/fa";
 import { FiSave } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
@@ -10,14 +10,25 @@ import { API_BASE_URL } from "../utils/api";
 
 const Create = () => {
   const navigate = useNavigate();
-  const { user, authToken } = useAuth(); // ✅ authToken required
+  const { user, authToken } = useAuth(); // authToken and user is required
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     content: "",
-    status: "published", // ✅ correct status (API expects 'published')
+    status: "published", 
+    author_id: user?.id || "",
   });
+
+useEffect(() => {
+  if (user?.id) {
+    setFormData((prevData) => ({
+      ...prevData,
+      author_id: user.id,
+    }));
+  }
+}, [user]);
+
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -43,7 +54,7 @@ const Create = () => {
           },
         }
       );
-
+        console.log("Submitting Post:", formData);
       if (response.status === 200 || response.status === 201) {
         toast.success("Post created successfully!");
         navigate("/post");

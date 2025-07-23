@@ -50,7 +50,7 @@ const Sidebar = () => {
             {/* Menu Items */}
             <div className="mt-10 flex flex-col gap-2">
               <Link
-                to={"/"}
+                to={"/post"}
                 href="#"
                 className="flex items-center gap-3 hover:bg-gray-200 p-2 rounded-xl"
               >

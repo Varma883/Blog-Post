@@ -13,10 +13,8 @@ import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
-import Paragraph from "@tiptap/extension-paragraph"; // ✅ Added paragraph explicitly
-import { FontSize } from "../extentions/FontSize"; // ✅ Make sure this exists correctly
-import { MdFormatAlignLeft } from "react-icons/md";
-
+import Paragraph from "@tiptap/extension-paragraph";
+import { FontSize } from "../extentions/FontSize";
 
 const RichTextEditor = ({ content, onChange }) => {
   const editor = useEditor({
@@ -35,11 +33,7 @@ const RichTextEditor = ({ content, onChange }) => {
       HorizontalRule,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Link.configure({ openOnClick: false }),
-      Paragraph.configure({
-        HTMLAttributes: {
-          class: "min-h-[5rem]",
-        },
-      }),
+      Paragraph.configure({ HTMLAttributes: { class: "min-h-[5rem]" } }),
     ],
     content: content || '<p class="min-h-[5rem]"></p>',
     editorProps: {
@@ -106,11 +100,10 @@ const RichTextEditor = ({ content, onChange }) => {
           ["Strike", "strike", <s>S</s>],
         ].map(([title, cmd, icon]) => (
           <button
+            type="button"
             key={cmd}
             onClick={() => toggleStyle(`toggle${cmd.charAt(0).toUpperCase() + cmd.slice(1)}`)}
-            className={`p-1 px-2 rounded ${
-              editor.isActive(cmd) ? "bg-gray-200" : "hover:bg-gray-100"
-            }`}
+            className={`p-1 px-2 rounded ${editor.isActive(cmd) ? "bg-gray-200" : "hover:bg-gray-100"}`}
             title={title}
           >
             {icon}
@@ -129,11 +122,10 @@ const RichTextEditor = ({ content, onChange }) => {
         {/* Text Align */}
         {["left", "center", "right"].map((align) => (
           <button
+            type="button"
             key={align}
             onClick={() => editor.chain().focus().setTextAlign(align).run()}
-            className={`p-1 px-2 rounded ${
-              editor.isActive({ textAlign: align }) ? "bg-gray-200" : "hover:bg-gray-100"
-            }`}
+            className={`p-1 px-2 rounded ${editor.isActive({ textAlign: align }) ? "bg-gray-200" : "hover:bg-gray-100"}`}
             title={`Align ${align}`}
           >
             {align.charAt(0).toUpperCase()}
@@ -143,75 +135,75 @@ const RichTextEditor = ({ content, onChange }) => {
         {/* Headings */}
         {[1, 2, 3].map((lvl) => (
           <button
+            type="button"
             key={lvl}
             onClick={() => editor.chain().focus().toggleHeading({ level: lvl }).run()}
-            className={`p-1 px-2 rounded ${
-              editor.isActive("heading", { level: lvl }) ? "bg-gray-200" : "hover:bg-gray-100"
-            }`}
+            className={`p-1 px-2 rounded ${editor.isActive("heading", { level: lvl }) ? "bg-gray-200" : "hover:bg-gray-100"}`}
             title={`Heading ${lvl}`}
           >
             H{lvl}
           </button>
         ))}
 
-        {/* Block Types */}
+        {/* Blocks */}
         <button
+          type="button"
           onClick={() => editor.chain().focus().setParagraph().run()}
           className={`p-1 px-2 rounded ${editor.isActive("paragraph") ? "bg-gray-200" : "hover:bg-gray-100"}`}
           title="Paragraph"
         >
           P
         </button>
+
         <button
+          type="button"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           className={`p-1 px-2 rounded ${editor.isActive("bulletList") ? "bg-gray-200" : "hover:bg-gray-100"}`}
           title="Bullet List"
         >
           •
         </button>
+
         <button
+          type="button"
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           className={`p-1 px-2 rounded ${editor.isActive("orderedList") ? "bg-gray-200" : "hover:bg-gray-100"}`}
           title="Ordered List"
         >
           1.
         </button>
+
         <button
+          type="button"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           className={`p-1 px-2 rounded ${editor.isActive("blockquote") ? "bg-gray-200" : "hover:bg-gray-100"}`}
           title="Blockquote"
         >
           ❝
         </button>
+
         <button
+          type="button"
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           className={`p-1 px-2 rounded ${editor.isActive("codeBlock") ? "bg-gray-200" : "hover:bg-gray-100"}`}
           title="Code Block"
         >
           {"</>"}
         </button>
+
         <button
+          type="button"
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
           className="p-1 px-2 rounded hover:bg-gray-100"
           title="Horizontal Rule"
         >
           ―
         </button>
-        <button
-          onClick={() => {
-            const url = window.prompt("Enter URL");
-            if (url) {
-              editor.chain().focus().setLink({ href: url }).run();
-            }
-          }}
-          className={`p-1 px-2 rounded ${editor.isActive("link") ? "bg-gray-200" : "hover:bg-gray-100"}`}
-          title="Insert Link"
-        >
-          🔗
-        </button>
+
+        
       </div>
 
-      {/* Editor Area */}
+      {/* Editor Content */}
       <div className="p-4 bg-white rounded-b-xl">
         <EditorContent editor={editor} />
       </div>
