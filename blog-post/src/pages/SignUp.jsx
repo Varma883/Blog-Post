@@ -1,13 +1,12 @@
-// ✅ FIXED SignUp.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; // ✅ Added
+import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { API_BASE_URL } from "../utils/api";
 
 const SignUp = () => {
-  const { login } = useAuth(); // ✅ Added
+  const { login } = useAuth(); 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
@@ -40,7 +39,7 @@ const SignUp = () => {
 
         const { token, user } = response.data;
 
-        login(token, user); // ✅ Stores in context + localStorage
+        login(token, user); 
         navigate("/login", { replace: true });
       } else {
         toast.error(response.data.message || "Signup failed.");

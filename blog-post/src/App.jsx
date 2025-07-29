@@ -1,10 +1,10 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
 import SignUp from './pages/SignUp';
-import Posts from './pages/Posts';
+import AllPosts from './pages/AllPosts';
 import Create from './pages/Create';
-import ViewBlog from './pages/ViewBlog'; 
+import ViewBlog from './pages/ViewBlog';
 import Update from './pages/Update';
 import Dashboard from './layout/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -26,6 +26,14 @@ const App = () => {
           }
         />
         <Route
+          path="/login"
+          element={
+            <RedirectIfLoggedIn>
+              <Login />
+            </RedirectIfLoggedIn>
+          }
+        />
+        <Route
           path="/signup"
           element={
             <RedirectIfLoggedIn>
@@ -34,7 +42,7 @@ const App = () => {
           }
         />
 
-        {/* Protected layout for authenticated routes */}
+        {/* Protected layout */}
         <Route
           path="/"
           element={
@@ -43,31 +51,14 @@ const App = () => {
             </ProtectedRoute>
           }
         >
-          <Route path="/post" element={<Posts />} />
-          <Route path="/create" element={<Create />} />
-          <Route
-          path="/view/:id"
-          element={
-            <ProtectedRoute>
-              <ViewBlog />
-            </ProtectedRoute>
-          }
-        />
-
-        <Route
-          path="/update/:id"
-          element={
-            <ProtectedRoute>
-              <Update />
-            </ProtectedRoute>
-          }
-        />
+          <Route path="post" element={<AllPosts />} />
+          <Route path="create" element={<Create />} />
+          <Route path="view/:id" element={<ViewBlog />} />
+          <Route path="update/:id" element={<Update />} />
         </Route>
 
-        
-
-        
-        
+        {/* Catch-all for unknown routes */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
 
       <ToastContainer />

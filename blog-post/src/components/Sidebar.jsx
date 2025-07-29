@@ -7,6 +7,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { IoLogOutOutline } from "react-icons/io5";
 import { toast } from "react-toastify";
+import { MdOutlineArchive } from "react-icons/md";
+import { FaCompassDrafting } from "react-icons/fa6";
+import { IoEyeOutline } from "react-icons/io5";
+import { FaRegEye  } from "react-icons/fa"
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
@@ -55,21 +59,28 @@ const Sidebar = () => {
                 className="flex items-center gap-3 hover:bg-gray-200 p-2 rounded-xl"
               >
                 <LuNewspaper className="text-xl" />
-                {isOpen && <span>Blog Post</span>}
+                {isOpen && <span>All Post</span>}
               </Link>
               <a
                 href="#"
                 className="flex items-center gap-3 hover:bg-gray-200 p-2 rounded-xl"
               >
-                <MdOutlinePeopleAlt className="text-xl" />
-                {isOpen && <span>Analytics</span>}
+                <FaRegEye  className="text-xl" />
+                {isOpen && <span>Published</span>}
               </a>
               <a
                 href="#"
                 className="flex items-center gap-3 hover:bg-gray-200 p-2 rounded-xl"
               >
-                <IoSettingsOutline className="text-xl" />
-                {isOpen && <span>Settings</span>}
+                <FaCompassDrafting className="text-xl" />
+                {isOpen && <span>Draft</span>}
+              </a>
+               <a
+                href="#"
+                className="flex items-center gap-3 hover:bg-gray-200 p-2 rounded-xl"
+              >
+                <MdOutlineArchive className="text-xl" />
+                {isOpen && <span>Archived</span>}
               </a>
               <a
                 href="#"

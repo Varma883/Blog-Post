@@ -75,7 +75,7 @@ const Update = () => {
 
   try {
     const response = await axios.put(
-      `${API_BASE_URL}/api/public/api/posts/${postId}}`,
+      `${API_BASE_URL}/api/public/api/posts/${postId}`,
       formData,
       {
         headers: {

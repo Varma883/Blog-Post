@@ -49,7 +49,7 @@ useEffect(() => {
         formData,
         {
           headers: {
-            Authorization: `Bearer ${authToken}`, // ✅ FIXED: added token header
+            Authorization: `Bearer ${authToken}`, 
             "Content-Type": "application/json",
           },
         }

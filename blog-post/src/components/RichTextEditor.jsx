@@ -14,6 +14,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
 import Paragraph from "@tiptap/extension-paragraph";
+import Image from "@tiptap/extension-image";
 import { FontSize } from "../extentions/FontSize";
 
 const RichTextEditor = ({ content, onChange }) => {
@@ -33,12 +34,13 @@ const RichTextEditor = ({ content, onChange }) => {
       HorizontalRule,
       TextAlign.configure({ types: ["heading", "paragraph"] }),
       Link.configure({ openOnClick: false }),
-      Paragraph.configure({ HTMLAttributes: { class: "min-h-[5rem]" } }),
+      Paragraph.configure({ HTMLAttributes: { class: "min-h-[1rem] m-0" } }),
+      Image.configure({ inline: false, allowBase64: true }),
     ],
-    content: content || '<p class="min-h-[5rem]"></p>',
+    content: content || '<p class="min-h-[1rem] m-0"></p>',
     editorProps: {
       attributes: {
-        class: "prose focus:outline-none min-h-[5rem] p-4 text-",
+        class: "focus:outline-none min-h-[5rem] p-4 space-y-2",
         placeholder: "Type here...",
       },
     },
@@ -61,9 +63,10 @@ const RichTextEditor = ({ content, onChange }) => {
   };
 
   return (
-    <div className="border border-gray-300 rounded-xl bg-white shadow">
+    <div className="border border-gray-300 rounded-xl bg-white shadow max-h-[600px] overflow-y-auto">
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 p-2 border-b border-gray-300 bg-gray-50 rounded-t-xl">
+      <div className="flex flex-wrap items-center gap-1 p-2 border-b border-gray-300 bg-gray-50 rounded-t-xl sticky top-0 z-10">
+
         {/* Font Family */}
         <select
           onChange={(e) => editor.chain().focus().setFontFamily(e.target.value).run()}
@@ -200,11 +203,30 @@ const RichTextEditor = ({ content, onChange }) => {
           ―
         </button>
 
-        
+        {/* Image Upload */}
+        <label className="p-1 px-2 rounded hover:bg-gray-100 cursor-pointer" title="Insert Image">
+          🖼️
+          <input
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (!file) return;
+
+              const reader = new FileReader();
+              reader.onload = () => {
+                editor.chain().focus().setImage({ src: reader.result }).run();
+              };
+              reader.readAsDataURL(file);
+            }}
+          />
+        </label>
+
       </div>
 
       {/* Editor Content */}
-      <div className="p-4 bg-white rounded-b-xl">
+      <div className="p-4 bg-white rounded-b-xl max-h-[500px] overflow-y-auto">
         <EditorContent editor={editor} />
       </div>
     </div>

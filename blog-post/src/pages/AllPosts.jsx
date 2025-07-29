@@ -1,22 +1,50 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import { Link, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../utils/api";
 import { useAuth } from "../context/AuthContext";
+import { MdOutlineAccountCircle } from "react-icons/md";
+import { VscAccount } from "react-icons/vsc";
 
-const Posts = () => {
+const AllPosts = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const optionRefs = useRef([]); // edit and archive reff
   const [isStatusOpen, setIsStatusOpen] = useState(false);
-  const [isAutherOpen, setIsAutherOpen] = useState(false);
+  const statusRef = useRef(null); // use ref for status
+  const [isOpen, setIsOpen] = useState(false); // for account dropdown
+  const dropdownRef = useRef(null); // usinf useRef for account drop down
   const [posts, setPosts] = useState([]);
   const [page, setPage] = useState(1); // track current page
   const [lastPage, setLastPage] = useState(1); // get total number of pages
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
-  const { user, authToken } = useAuth();
+  const { user, authToken, logout } = useAuth();
+
+  const toogleDropdown = () => {
+    setIsOpen((prev) => !prev);
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+      if (statusRef.current && !statusRef.current.contains(event.target)) {
+        setIsStatusOpen(false);
+      }
+      if (
+        optionRefs.current.every((ref) => ref && !ref.contains(event.target))
+      ) {
+        setActiveDropdown(null);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchPosts = async (page) => {
@@ -26,7 +54,8 @@ const Posts = () => {
           `${API_BASE_URL}/api/public/api/posts?page=${page}`
         );
         setPosts(response.data.data);
-        setPage(response.data.current_page); //getting the current page data from the api
+        console.log(response.data.data, "1234567890-");
+        setPage(response.data.current_page);
         setLastPage(response.data.last_page);
       } catch (error) {
         console.error("Error fetching posts:", error);
@@ -58,6 +87,7 @@ const Posts = () => {
         return "bg-gray-400";
       case "archived":
         return "bg-red-400";
+
       default:
         return "bg-gray-300";
     }
@@ -86,26 +116,30 @@ const Posts = () => {
   };
 
   const archivePost = async (id) => {
-    if (!window.confirm("Are you sure you want to archive this post?")) return;
+  if (!window.confirm("Are you sure you want to archive this post?")) return;
 
-    try {
-      await axios.patch(
-        `${API_BASE_URL}/api/public/api/posts/${id}`,
-        { status: "archived" },
-        {
-          headers: { Authorization: `Bearer ${authToken}` },
-        }
-      );
+  try {
+    await axios.patch(
+      `${API_BASE_URL}/api/public/api/posts/${id}/archive`,
+      {},
+      {
+        headers: { Authorization: `Bearer ${authToken}` },
+      }
+    );
 
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post.id === id ? { ...post, status: "archived" } : post
-        )
-      );
-    } catch (error) {
-      console.error("Failed to archive post:", error);
-    }
-  };
+    setPosts((prevPosts) => {
+      const updatedPosts = prevPosts.filter((post) => post.id !== id);
+      optionRefs.current = [];
+      return updatedPosts;
+    });
+    setActiveDropdown(null);
+    toast.success("Post archived successfully.");
+  } catch (error) {
+    console.error("Failed to archive post:", error);
+    toast.error("Failed to archive post. Please try again.");
+  }
+};
+
 
   return (
     <>
@@ -115,13 +149,29 @@ const Posts = () => {
           <h1 className="text-sm md:text-xl lg:text-2xl font-sans font-medium">
             Blog Post
           </h1>
-          <Link
-            to="/create"
-            className="text-white flex items-center text-center gap-2 lg:gap-3 font-medium rounded-lg text-xs px-2 py-1.5 lg:text-sm lg:px-4 lg:py-2.5 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-800"
-          >
-            <FaPlus />
-            Create New Post
-          </Link>
+          <div className="relative" ref={dropdownRef}>
+            <button
+              className="flex items-center gap-2"
+              onClick={toogleDropdown}
+            >
+              <VscAccount className="text-xl" />
+            </button>
+            {isOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg border z-50">
+                <div className="px-4 py-2 text-sm text-gray-700 border-b">
+                  Signed in as
+                  <br />
+                  <span className="font-semibold">{user?.name || "User"}</span>
+                  <button
+                    onClick={logout}
+                    className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Filters and Search */}
@@ -164,13 +214,10 @@ const Posts = () => {
               {/* Filters Section */}
               <div className="flex gap-3 justify-between">
                 {/* Status Filter */}
-                <div
-                  className="relative"
-                  onMouseEnter={() => setIsStatusOpen(true)}
-                  onMouseLeave={() => setIsStatusOpen(false)}
-                >
+                <div className="relative" ref={statusRef}>
                   <button
                     type="button"
+                    onClick={() => setIsStatusOpen((prev) => !prev)}
                     className="text-gray-900 border border-gray-300 bg-gray-50 focus:ring-gray-400 focus:border-gray-400 font-medium rounded-lg text-[10px] lg:text-sm px-3 py-2 inline-flex items-center"
                   >
                     All Statuses
@@ -223,73 +270,22 @@ const Posts = () => {
                   )}
                 </div>
 
-                {/* Author Filter */}
-                <div
-                  className="relative"
-                  onMouseEnter={() => setIsAutherOpen(true)}
-                  onMouseLeave={() => setIsAutherOpen(false)}
-                >
-                  <button
-                    type="button"
-                    className="text-gray-900 border border-gray-300 bg-gray-50 focus:ring-gray-400 focus:border-gray-400 font-medium lg rounded-lg text-[10px] lg:text-sm px-3 py-2 inline-flex items-center"
+                <div className="relative">
+                  <Link
+                    to="/create"
+                    className="text-white flex items-center text-center gap-2 lg:gap-3 font-medium rounded-lg text-xs px-2 py-1.5 lg:text-sm lg:px-4 lg:py-2.5 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-800"
                   >
-                    All Authors
-                    <svg
-                      className="w-2.5 h-2.5 ms-2"
-                      aria-hidden="true"
-                      fill="none"
-                      viewBox="0 0 10 6"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="m1 1 4 4 4-4"
-                      />
-                    </svg>
-                  </button>
-
-                  {isAutherOpen && (
-                    <div className="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 mt-2">
-                      <ul className="py-2 text-sm text-gray-700">
-                        <li>
-                          <a
-                            href="#"
-                            className="block px-4 py-2 hover:bg-gray-100"
-                          >
-                            John Doe
-                          </a>
-                        </li>
-                        <li>
-                          <a
-                            href="#"
-                            className="block px-4 py-2 hover:bg-gray-100"
-                          >
-                            Emily Smith
-                          </a>
-                        </li>
-                      </ul>
-                    </div>
-                  )}
-                </div>
-
-                {/* Clear Filters Button */}
-                <div>
-                  <button
-                    type="button"
-                    className="text-gray-400 border border-gray-300 bg-gray-50 focus:ring-gray-400 focus:border-gray-400 font-medium rounded-lg text-[10px] lg:text-sm px-3 py-2 inline-flex items-center"
-                  >
-                    Clear Filters
-                  </button>
+                    <FaPlus />
+                    Create New Post
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Posts Grid */}
+      
+
         {/* Posts Grid */}
         <div className="p-5 flex flex-col gap-5 items-center mb-2">
           {loading ? (
@@ -319,15 +315,20 @@ const Posts = () => {
                               post.status
                             )} rounded flex items-center justify-center w-[70px] h-[18px] text-[10px] sm:w-[80px] sm:h-[19px] sm:text-[11px] md:w-[90px] md:h-[20px] md:text-[13px]`}
                           >
-                            <p className="text-white">{post.status}</p>
+                            <p className="text-white">
+                              {post.status.toUpperCase()}
+                            </p>
                           </div>
 
                           {/* Dropdown Menu */}
-                          <div className="relative inline-block text-left">
+                          <div
+                            className="relative inline-block text-left"
+                            ref={(el) => (optionRefs.current[index] = el)}
+                          >
                             <button
                               onClick={() =>
-                                setActiveDropdown(
-                                  activeDropdown === index ? null : index
+                                setActiveDropdown((prev) =>
+                                  prev === index ? null : index
                                 )
                               }
                               className="inline-flex items-center p-2 text-sm font-medium text-center hover:bg-gray-50 rounded"
@@ -422,4 +423,4 @@ const Posts = () => {
   );
 };
 
-export default Posts;
+export default AllPosts;

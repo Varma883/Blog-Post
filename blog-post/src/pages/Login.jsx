@@ -1,10 +1,10 @@
-// ✅ FIXED Login.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { API_BASE_URL } from "../utils/api";
+import loginImage from "../assets/LoginVector.jpg";
 
 const Login = () => {
   const { login } = useAuth(); // ✅ useAuth hook
@@ -59,62 +59,91 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-50">
-      <div className="w-[90%] md:w-[350px] h-[350px] p-5 rounded-2xl bg-gray-100 shadow-xl">
-        <div className="flex justify-center items-center mb-4">
-          <h1 className="text-xs lg:text-xl font-sans font-medium">
-            Login To Account
-          </h1>
+    <div className="min-h-screen flex justify-center items-center bg-gray-50 px-4">
+  <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-2xl shadow-lg overflow-hidden">
+    
+    {/* Image Section */}
+    <div className="hidden md:flex md:w-1/2 bg-gray-100 items-center justify-center">
+      <img
+        src={loginImage}
+        alt="Login Illustration"
+        className="w-[80%] max-w-sm h-auto object-contain"
+      />
+    </div>
+
+    {/* Form Section */}
+    <div className="w-full md:w-1/2 p-8 md:p-12">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+        Login to Your Account
+      </h2>
+
+      <form className="space-y-5" onSubmit={handlelogin}>
+        {/* Email Field */}
+        <div>
+          <label
+            htmlFor="email"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Email Address
+          </label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
+            onChange={handlechange}
+            placeholder="you@example.com"
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none transition text-sm bg-gray-50"
+            required
+          />
         </div>
 
-        <form className="mt-3" onSubmit={handlelogin}>
-          <div className="mb-5">
-            <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900">
-              Your email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handlechange}
-              className="bg-gray-100 border border-gray-200 text-gray-900 text-sm rounded-lg w-full p-2.5"
-              placeholder="youremailid@domain.com"
-              required
-            />
-          </div>
+        {/* Password Field */}
+        <div>
+          <label
+            htmlFor="password"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Password
+          </label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handlechange}
+            placeholder="Enter your password"
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none transition text-sm bg-gray-50"
+            required
+          />
+        </div>
 
-          <div className="mb-5">
-            <label htmlFor="password" className="block mb-2 text-sm font-medium text-gray-900">
-              Your password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handlechange}
-              className="bg-gray-100 border border-gray-200 text-black text-sm rounded-lg block w-full p-2.5"
-              required
-            />
-          </div>
+        {/* Submit Button */}
+        <div className="flex flex-col items-center gap-3 mt-6">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={`w-full text-white text-sm font-medium py-2 rounded-lg transition ${
+              isSubmitting
+                ? 'bg-blue-400 cursor-not-allowed'
+                : 'bg-blue-600 hover:bg-blue-700'
+            }`}
+          >
+            {isSubmitting ? "Logging in..." : "Login"}
+          </button>
 
-          <div className="flex flex-col gap-3 items-center">
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm min-w-[150px] py-2 px-6"
-            >
-              {isSubmitting ? "Logging in..." : "Login"}
-            </button>
-
-            <Link to="/signup" className="font-medium text-blue-600 hover:underline text-sm">
-              Don't have an account? Register
-            </Link>
-          </div>
-        </form>
-      </div>
+          {/* <Link
+            to="/signup"
+            className="text-sm text-blue-600 hover:underline"
+          >
+            Don't have an account? Sign up
+          </Link> */}
+        </div>
+      </form>
     </div>
+  </div>
+</div>
+
   );
 };
 
