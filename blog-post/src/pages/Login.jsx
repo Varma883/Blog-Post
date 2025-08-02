@@ -4,10 +4,10 @@ import { useAuth } from "../context/AuthContext";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { API_BASE_URL } from "../utils/api";
-import loginImage from "../assets/LoginVector.jpg";
+import loginImage from "../assets/LoginVector4.jpg";
 
 const Login = () => {
-  const { login } = useAuth(); // ✅ useAuth hook
+  const { login } = useAuth(); 
   const navigate = useNavigate();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,21 +59,21 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center bg-gray-50 px-4">
+   <div className="min-h-screen flex justify-center items-center bg-gradient-to-r from-blue-700 to-purple-600 px-4">
   <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-2xl shadow-lg overflow-hidden">
     
-    {/* Image Section */}
-    <div className="hidden md:flex md:w-1/2 bg-gray-100 items-center justify-center">
+    {/* Image Section - edge to edge */}
+    <div className="relative w-full md:w-1/2 h-60 md:h-auto z-10 ">
       <img
         src={loginImage}
         alt="Login Illustration"
-        className="w-[80%] max-w-sm h-auto object-contain"
+        className="w-full h-full object-cover shadow-2xl md:shadow-[20px_0px_40px_-10px_rgba(0,0,0,0.4)] shadow-purple-500 "
       />
     </div>
 
     {/* Form Section */}
-    <div className="w-full md:w-1/2 p-8 md:p-12">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
+    <div className="w-full md:w-1/2 p-8 md:p-12 bg-gradient-to-l from-blue-300 to-purple-500   ">
+      <h2 className="text-2xl font-semibold text-white mb-6 text-center ">
         Login to Your Account
       </h2>
 
@@ -82,7 +82,7 @@ const Login = () => {
         <div>
           <label
             htmlFor="email"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-white mb-1"
           >
             Email Address
           </label>
@@ -102,7 +102,7 @@ const Login = () => {
         <div>
           <label
             htmlFor="password"
-            className="block text-sm font-medium text-gray-700 mb-1"
+            className="block text-sm font-medium text-white mb-1"
           >
             Password
           </label>
@@ -143,6 +143,7 @@ const Login = () => {
     </div>
   </div>
 </div>
+
 
   );
 };

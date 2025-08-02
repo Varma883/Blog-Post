@@ -11,6 +11,11 @@ import ProtectedRoute from './components/ProtectedRoute';
 import RedirectIfLoggedIn from './components/RedirectIfLoggedIn';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import PublishedPosts from './pages/PublishedPosts'
+import DraftPost from './pages/DraftPost';
+import ArchivedPost from './pages/ArchivedPost';
+import UserData from './pages/UserData';
+
 
 const App = () => {
   return (
@@ -55,6 +60,10 @@ const App = () => {
           <Route path="create" element={<Create />} />
           <Route path="view/:id" element={<ViewBlog />} />
           <Route path="update/:id" element={<Update />} />
+          <Route path="published" element={<PublishedPosts />} />
+          <Route path="draft" element={<DraftPost />} />
+           {/* <Route path="archive" element={<ArchivedPost />} /> */}
+           <Route path="userdata" element={<UserData />} />
         </Route>
 
         {/* Catch-all for unknown routes */}

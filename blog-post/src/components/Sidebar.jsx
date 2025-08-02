@@ -10,18 +10,18 @@ import { toast } from "react-toastify";
 import { MdOutlineArchive } from "react-icons/md";
 import { FaCompassDrafting } from "react-icons/fa6";
 import { IoEyeOutline } from "react-icons/io5";
-import { FaRegEye  } from "react-icons/fa"
+import { FaRegEye } from "react-icons/fa";
+import { FaUsers } from "react-icons/fa";
 
 const Sidebar = () => {
   const [isOpen, setIsOpen] = useState(true);
-    const {logout}=useAuth()
-  const navigate = useNavigate()
- 
+  const { logout } = useAuth();
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     logout();
-    
-    toast.info("Logged out successfully");
 
+    toast.info("Logged out successfully");
   };
 
   const toggleSidebar = () => {
@@ -30,10 +30,9 @@ const Sidebar = () => {
 
   return (
     <div>
-
-      <div className="hidden md:block h-screen">
+      <div className="hidden md:block h-screen bg-[#F4F7FA] ">
         <div
-          className={`h-screen border-e border-t border-gray-400 p-3 shadow-xl transition-all duration-300
+          className={`h-screen rounded-xl border-e bg-sky-700  border-gray-400 p-3 shadow-2xl transition-all duration-300
         ${isOpen ? "w-[250px]" : "w-[60px]"} 
        block sm:flex flex-col justify-between`}
         >
@@ -41,55 +40,81 @@ const Sidebar = () => {
           <div>
             <div className="flex items-center justify-between">
               {isOpen && (
-                <h1 className="text-xl font-sans font-medium">Twincles</h1>
+                // <h1 className="text-xl font-sans font-medium">Twincles</h1>
+                <img
+                  src="https://twincles.com/wp-content/uploads/2025/01/cropped-cropped-Untitled-design-33-300x100.png"
+                  className="w-38 rounded-2xl"
+                  alt="img"
+                />
               )}
               <button
                 onClick={toggleSidebar}
-                className="hover:bg-gray-100 p-1 rounded-xl"
+                className="p-2 rounded-xl hover:bg-blue-500  active:bg-sky-600 active:text-white"
               >
-                <FiSidebar className="text-black text-xl" />
+                <FiSidebar className=" text-white text-xl" />
               </button>
             </div>
 
             {/* Menu Items */}
-            <div className="mt-10 flex flex-col gap-2">
-              <Link
-                to={"/post"}
-                href="#"
-                className="flex items-center gap-3 hover:bg-gray-200 p-2 rounded-xl"
-              >
-                <LuNewspaper className="text-xl" />
-                {isOpen && <span>All Post</span>}
-              </Link>
-              <a
-                href="#"
-                className="flex items-center gap-3 hover:bg-gray-200 p-2 rounded-xl"
-              >
-                <FaRegEye  className="text-xl" />
-                {isOpen && <span>Published</span>}
-              </a>
-              <a
-                href="#"
-                className="flex items-center gap-3 hover:bg-gray-200 p-2 rounded-xl"
-              >
-                <FaCompassDrafting className="text-xl" />
-                {isOpen && <span>Draft</span>}
-              </a>
-               <a
-                href="#"
-                className="flex items-center gap-3 hover:bg-gray-200 p-2 rounded-xl"
-              >
-                <MdOutlineArchive className="text-xl" />
-                {isOpen && <span>Archived</span>}
-              </a>
-              <a
-                href="#"
-                className="flex items-center gap-3 hover:bg-gray-200 p-2 rounded-xl"
-                 onClick={handleLogout}
+
+            <div className="relative ">
+              <div className="mt-10 flex flex-col gap-2">
+                <Link
+                  to={"/post"}
+                  href="#"
+                  className="flex items-center gap-3 text-white hover:bg-blue-500 p-2 active:bg-sky-600 active:text-white rounded-xl"
+                >
+                  <LuNewspaper className="text-xl" />
+                  {isOpen && <span>All Post</span>}
+                </Link>
+
+                <Link
+                  to={"/published"}
+                  href="#"
+                  className="flex items-center gap-3 text-white hover:bg-blue-500 p-2 active:bg-sky-600 active:text-white rounded-xl"
+                >
+                  <FaRegEye className="text-xl" />
+                  {isOpen && <span>Published</span>}
+                </Link>
+
+                <Link
+                  to={"/draft"}
+                  href="#"
+                  className="flex items-center gap-3 text-white hover:bg-blue-500 p-2 active:bg-sky-600 active:text-white rounded-xl"
+                >
+                  <FaCompassDrafting className="text-xl" />
+                  {isOpen && <span>Draft</span>}
+                </Link>
+
+                {/* <Link
+                  to={"/archive"}
+                  href="#"
+                  className="flex items-center gap-3 text-white hover:bg-blue-500 p-2 active:bg-sky-600 active:text-white rounded-xl"
+                >
+                  <MdOutlineArchive className="text-xl" />
+                  {isOpen && <span>Archived</span>}
+                </Link> */}
+
+                <Link
+                  to={"/userdata"}
+                  href="#"
+                  className="flex items-center gap-3 text-white hover:bg-blue-500 p-2 active:bg-sky-600 active:text-white rounded-xl"
+                >
+                  <FaUsers className="text-xl" />
+                  {isOpen && <span>User Data</span>}
+                </Link>
+              </div>
+            </div>
+            <div className="absolute bottom-5 w-full">
+              <button
+                onClick={handleLogout}
+                className={`flex items-center ${
+                  isOpen ? "justify-start gap-3 px-16" : "justify-center px-2"
+                } bg-amber-500 text-white hover:bg-blue-500 p-2 active:bg-sky-600 active:text-white rounded-xl transition`}
               >
                 <IoLogOutOutline className="text-xl" />
                 {isOpen && <span>Logout</span>}
-              </a>
+              </button>
             </div>
           </div>
         </div>

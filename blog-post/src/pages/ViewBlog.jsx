@@ -97,10 +97,10 @@ const ViewBlog = () => {
   return (
     <div className="w-full min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="flex justify-between items-center px-6 py-3 bg-white shadow-sm">
+      <div className="flex justify-between items-center px-6 py-3 bg-[#0072CE] shadow-sm rounded-2xl">
         <Link
           to="/post"
-          className="flex items-center gap-2 text-gray-600 hover:text-blue-600 text-sm font-medium"
+          className="flex items-center gap-2 text-white hover:text-gray-300 text-sm font-medium"
         >
           <FaArrowLeft />
           <span>Back to Blog Post</span>

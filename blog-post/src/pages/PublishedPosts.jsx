@@ -10,7 +10,7 @@ import { MdOutlineAccountCircle } from "react-icons/md";
 import { VscAccount } from "react-icons/vsc";
 import { IoLogOutOutline } from "react-icons/io5";
 
-const AllPosts = () => {
+const DraftPost = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const optionRefs = useRef([]); // edit and archive reff
   const [isStatusOpen, setIsStatusOpen] = useState(false);
@@ -185,7 +185,7 @@ const AllPosts = () => {
 
         {/* Filters and Search */}
         <div className="p-3 mt-2">
-          <div className="border border-gray-300 w-full p-4 rounded-2xl ">
+          <div className="border border-gray-300 w-full p-4 rounded-2xl bg-gray-100">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               {/* Search Bar */}
               <form className="w-full lg:w-[500px]">
@@ -252,6 +252,15 @@ const AllPosts = () => {
                       <ul className="py-2 text-sm text-gray-700">
                         <li>
                           <Link
+                            to={"/post"}
+                            href="#"
+                            className="block px-4 py-2 hover:bg-gray-100"
+                          >
+                            All Posts
+                          </Link>
+                        </li>
+                        <li>
+                          <Link
                             to={"/published"}
                             href="#"
                             className="block px-4 py-2 hover:bg-gray-100"
@@ -259,16 +268,8 @@ const AllPosts = () => {
                             Published
                           </Link>
                         </li>
+{/* 
                         <li>
-                          <Link
-                            to={"/draft"}
-                            href="#"
-                            className="block px-4 py-2 hover:bg-gray-100"
-                          >
-                            Draft
-                          </Link>
-                        </li>
-                        {/* <li>
                           <Link
                             to={"/archive"}
                             href="#"
@@ -303,65 +304,71 @@ const AllPosts = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {Array.isArray(posts) && posts.length > 0 ? (
-                posts.map((post, index) => (
-                  <div
-                    key={post.id}
-                     onClick={() => DisplayDeatils(post.id)}
-                    className="relative bg-white shadow rounded-lg p-4"
-                  >
-                    <RiDeleteBin6Line
-                      onClick={async () => {
-                         e.stopPropagation()
-                        await deletePost(post.id);
-                      }}
-                      className=" absolute top-2 right-2 text-red-600 cursor-pointer hover:text-red-700"
-                    />
-                    <h2 className="text-lg font-semibold text-blue-800 mb-2 line-clamp-2">
-                      {post.title.length > 60
-                        ? `${post.title.slice(0, 60)}...`
-                        : post.title}
-                    </h2>
-                    <p className="text-gray-600 mb-1">
-                      Created:{" "}
-                      {new Date(post.created_at).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </p>
-                    <div className="flex justify-between gap-3 items-center">
-                      <div className="flex items-center gap-1 ">
-                        <p className="text-sm">Status:</p>
-                        <p
-                          className={`${getStatusColor(
-                            post.status
-                          )} text-gray-600 text-sm font-bold `}
-                        >
-                          {" "}
-                          {post.status.toUpperCase()}
-                        </p>
-                      </div>
+                posts
 
-                      <div className="flex justify-between gap-2 items-center mt-2">
-                        <button
-                          onClick={(e) => {e.stopPropagation();  updatePost(post.id)} }
-                          className="text-sm px-3 py-1 bg-sky-700 text-white rounded hover:bg-blue-700"
-                        >
-                          Update
-                        </button>
-                        <button
-                          onClick={(e) => {
+                  .filter((post) => post.status?.toLowerCase() === "published")
+                  .map((post, index) => (
+                    <div
+                      key={post.id}
+                      onClick={() => DisplayDeatils(post.id)}
+                      className="relative bg-white shadow rounded-lg p-4"
+                    >
+                      <RiDeleteBin6Line
+                        onClick={async () => {
+                          e.stopPropagation();
+                          await deletePost(post.id);
+                        }}
+                        className=" absolute top-2 right-2 text-red-600 cursor-pointer hover:text-red-700"
+                      />
+                      <h2 className="text-lg font-semibold text-blue-800 mb-2 line-clamp-2">
+                        {post.title.length > 60
+                          ? `${post.title.slice(0, 60)}...`
+                          : post.title}
+                      </h2>
+                      <p className="text-gray-600 mb-1">
+                        Created:{" "}
+                        {new Date(post.created_at).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </p>
+                      <div className="flex justify-between gap-3 items-center">
+                        <div className="flex items-center gap-1 ">
+                          <p className="text-sm">Status:</p>
+                          <p
+                            className={`${getStatusColor(
+                              post.status
+                            )} text-gray-600 text-sm font-bold `}
+                          >
+                            {" "}
+                            {post.status.toUpperCase()}
+                          </p>
+                        </div>
+
+                        <div className="flex justify-between gap-2 items-center mt-2">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              updatePost(post.id);
+                            }}
+                            className="text-sm px-3 py-1 bg-sky-700 text-white rounded hover:bg-blue-700"
+                          >
+                            Update
+                          </button>
+                          <button
+                            onClick={(e) => {
                               e.stopPropagation();
                               archivePost(post.id);
                             }}
-                          className="text-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                        >
-                          Archive
-                        </button>
+                            className="text-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                          >
+                            Archive
+                          </button>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))
+                  ))
               ) : (
                 <div className="w-full col-span-full flex justify-center items-center py-10">
                   <p className="text-gray-400 text-center text-lg">
@@ -382,7 +389,9 @@ const AllPosts = () => {
           >
             Prev
           </button>
-          Page {page} of {lastPage}
+          <span>
+            Page {page} of {lastPage}
+          </span>
           <button
             onClick={handleNext}
             disabled={page === lastPage}
@@ -396,4 +405,4 @@ const AllPosts = () => {
   );
 };
 
-export default AllPosts;
+export default DraftPost;

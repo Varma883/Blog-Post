@@ -98,16 +98,16 @@ const Update = () => {
   return (
     <div className="w-full min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="flex justify-between items-center px-6 py-3 bg-white shadow-sm">
+      <div className="flex justify-between items-center px-6 py-3 bg-[#0072CE] shadow-sm rounded-2xl">
         <Link
           to="/post"
-          className="flex items-center gap-2 text-gray-600 hover:text-blue-600 text-sm font-medium"
+          className="flex items-center gap-2 text-white hover:text-gray-300 text-sm font-medium"
         >
           <FaArrowLeft />
           <span>Back to Blog Post</span>
         </Link>
-        <h1 className="text-xl lg:text-2xl font-semibold text-gray-800">
-          Create New Blog Post
+        <h1 className="text-xl lg:text-2xl font-semibold text-white">
+          Edit Blog Post
         </h1>
       </div>
 
@@ -151,7 +151,7 @@ const Update = () => {
 
           {/* Author and Status */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Author
               </label>
@@ -161,7 +161,7 @@ const Update = () => {
                 readOnly
                 className="w-full p-3 rounded-lg border border-gray-300 text-sm bg-gray-100"
               />
-            </div>
+            </div> */}
 
             <div>
               <label
