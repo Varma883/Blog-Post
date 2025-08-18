@@ -1,14 +1,16 @@
 import axios from "axios";
+import Sidebar from "../components/Sidebar";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import React, { useEffect, useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { API_BASE_URL } from "../utils/api";
 import { useAuth } from "../context/AuthContext";
 import { MdOutlineAccountCircle } from "react-icons/md";
 import { VscAccount } from "react-icons/vsc";
 import { IoLogOutOutline } from "react-icons/io5";
+import { toast } from "react-toastify";
 
 const AllPosts = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
@@ -21,9 +23,17 @@ const AllPosts = () => {
   const [page, setPage] = useState(1); // track current page
   const [lastPage, setLastPage] = useState(1); // get total number of pages
   const [loading, setLoading] = useState(false);
-
+  const [activeStatus, setActiveStatus] = useState(null); // for filter API
   const navigate = useNavigate();
   const { user, authToken, logout } = useAuth();
+  const location = useLocation();
+
+  // search Bar
+
+  const [query, setQuery] = useState(""); // State for input
+  const [results, setResults] = useState([]); // State for API response
+
+  const queryParams = new URLSearchParams(location.search);
 
   const toogleDropdown = () => {
     setIsOpen((prev) => !prev);
@@ -48,36 +58,51 @@ const AllPosts = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const fetchPosts = async (page = 1, status = null) => {
+    setLoading(true);
+    try {
+      const endpoint = status
+        ? `${API_BASE_URL}/api/public/api/filter-by-status?status=${status}&page=${page}`
+        : `${API_BASE_URL}/api/public/api/posts?page=${page}`;
+
+      const headers = status ? { Authorization: `Bearer ${authToken}` } : {};
+
+      const response = await axios.get(endpoint, { headers });
+
+      setPosts(response.data.data || []);
+
+      setPage(response.data.current_page);
+
+      setLastPage(response.data.last_page);
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchPosts = async (page) => {
-      setLoading(true); //Starts loading here
-      try {
-        const response = await axios.get(
-          `${API_BASE_URL}/api/public/api/posts?page=${page}`
-        );
-        setPosts(response.data.data);
-        console.log(response.data.data, "1234567890-");
-        setPage(response.data.current_page);
-        setLastPage(response.data.last_page);
-      } catch (error) {
-        console.error("Error fetching posts:", error);
-      } finally {
-        setLoading(false); // stops loading aftet gtting the post
-      }
-    };
+    const currentStatus = new URLSearchParams(location.search).get("status");
+    setActiveStatus(currentStatus);
+    fetchPosts(page, currentStatus);
+  }, [location.search, page]);
 
-    fetchPosts(page);
-  }, [page]);
+  const fetchPostsByStatus = (status) => {
+    setIsStatusOpen(false);
+    setPage(1);
+    navigate(`?status=${status}`); // update the URL
+  };
 
+  //Pagination Handlers
   const handlePrev = () => {
     if (page > 1) {
-      setPage((prev) => prev - 1);
+      setPage((prev) => prev - 1); // This will trigger useEffect
     }
   };
 
   const handleNext = () => {
     if (page < lastPage) {
-      setPage((prev) => prev + 1);
+      setPage((prev) => prev + 1); // This will trigger useEffect
     }
   };
 
@@ -112,8 +137,10 @@ const AllPosts = () => {
       });
 
       setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
+      toast.success("Post deleted successfully.");
     } catch (error) {
       console.error("Failed to delete post:", error);
+      toast.error("Failed to delete post.");
     }
   };
 
@@ -142,9 +169,92 @@ const AllPosts = () => {
     }
   };
 
+  const restorePost = async (id) => {
+    try {
+      await axios.patch(
+        `${API_BASE_URL}/api/public/api/posts/${id}/restore`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post.id === id ? { ...post, status: "draft" } : post
+        )
+      );
+      toast.success("Post restored successfully.");
+    } catch (error) {
+      console.error("Restore failed:", error);
+      toast.error("Failed to restore post.");
+    }
+  };
+
+  const unpublishPost = async (id) => {
+    try {
+      await axios.patch(
+        `${API_BASE_URL}/api/public/api/posts/${id}/unpublish`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+
+      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
+      toast.success("Post unpublished successfully.");
+    } catch (error) {
+      console.error("Unpublish failed:", error);
+      toast.error("Failed to unpublish post.");
+    }
+  };
+
+  const publishPost = async (id) => {
+    try {
+      await axios.patch(
+        `${API_BASE_URL}/api/public/api/posts/${id}/publish`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${authToken}` },
+        }
+      );
+
+      setPosts((prevPosts) => prevPosts.filter((post) => post.id !== id));
+      toast.success("Post published successfully.");
+    } catch (error) {
+      console.error("Publish failed:", error);
+      toast.error("Failed to publish post.");
+    }
+  };
+
+  // search post
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+    try {
+      setLoading(true);
+      const res = await axios.get(
+        `https://twincles.mavenerp.in/api/public/api/posts/search?query=${query}`
+      );
+      setPosts(res.data.data);
+      setPage(1);
+      setLastPage(1);
+    } catch (error) {
+      console.error("Search failed", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (query.trim() === "") {
+      fetchPosts(); // Load default posts again
+    }
+  }, [query]);
+
   return (
     <>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-50 overflow-x-hidden">
         {/* Header */}
         <div className="flex justify-between items-center px-6 py-3  bg-[#0072CE] shadow-sm rounded-2xl">
           <h1 className="text-white text-sm md:text-xl lg:text-2xl font-sans font-medium">
@@ -185,10 +295,10 @@ const AllPosts = () => {
 
         {/* Filters and Search */}
         <div className="p-3 mt-2">
-          <div className="border border-gray-300 w-full p-4 rounded-2xl ">
+          <div className="border border-gray-300 bg-amber-400 w-full p-4 rounded-2xl ">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               {/* Search Bar */}
-              <form className="w-full lg:w-[500px]">
+              <form onSubmit={handleSearch} className="w-full lg:w-[500px] ">
                 <label htmlFor="default-search" className="sr-only">
                   Search
                 </label>
@@ -213,7 +323,9 @@ const AllPosts = () => {
                   <input
                     type="search"
                     id="default-search"
-                    className="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    className="block w-full p-2 ps-10 text-sm text-gray-900  rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Search posts..."
                     required
                   />
@@ -224,10 +336,11 @@ const AllPosts = () => {
               <div className="flex gap-3 justify-between">
                 {/* Status Filter */}
                 <div className="relative" ref={statusRef}>
+                  {/* Dropdown Trigger Button */}
                   <button
                     type="button"
-                    onClick={() => setIsStatusOpen((prev) => !prev)}
-                    className="text-gray-900 border border-gray-300 bg-gray-50 focus:ring-gray-400 focus:border-gray-400 font-medium rounded-lg text-[10px] lg:text-sm px-3 py-2 inline-flex items-center"
+                    onClick={() => setIsStatusOpen(!isStatusOpen)}
+                    className="text-white border-red-800 bg-red-600 focus:ring-gray-400 focus:border-gray-400 font-medium rounded-lg text-[10px] lg:text-sm px-3 py-2 inline-flex items-center"
                   >
                     All Statuses
                     <svg
@@ -247,45 +360,82 @@ const AllPosts = () => {
                     </svg>
                   </button>
 
+                  {/* Dropdown Menu */}
                   {isStatusOpen && (
                     <div className="z-10 absolute bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 mt-2">
                       <ul className="py-2 text-sm text-gray-700">
+                        {/* All */}
                         <li>
-                          <Link
-                            to={"/published"}
-                            href="#"
-                            className="block px-4 py-2 hover:bg-gray-100"
+                          <button
+                            onClick={() => {
+                              setPage(1);
+                              setIsStatusOpen(false);
+                              navigate({ pathname: location.pathname }); // Removes ?status param
+                            }}
+                            className="w-full text-left block px-4 py-2 hover:bg-gray-100"
+                          >
+                            All
+                          </button>
+                        </li>
+
+                        {/* Published */}
+                        <li>
+                          <button
+                            onClick={() => {
+                              fetchPostsByStatus("published");
+                              setIsStatusOpen(false);
+                              navigate(`?status=published`);
+                            }}
+                            className="w-full text-left block px-4 py-2 hover:bg-gray-100"
                           >
                             Published
-                          </Link>
+                          </button>
                         </li>
+
+                        {/* Draft */}
                         <li>
-                          <Link
-                            to={"/draft"}
-                            href="#"
-                            className="block px-4 py-2 hover:bg-gray-100"
+                          <button
+                            onClick={() => {
+                              fetchPostsByStatus("draft");
+                              setIsStatusOpen(false);
+                              navigate(`?status=draft`);
+                            }}
+                            className="w-full text-left block px-4 py-2 hover:bg-gray-100"
                           >
                             Draft
-                          </Link>
+                          </button>
                         </li>
-                        {/* <li>
-                          <Link
-                            to={"/archive"}
-                            href="#"
-                            className="block px-4 py-2 hover:bg-gray-100"
+
+                        {/* Archived */}
+                        <li>
+                          <button
+                            onClick={() => {
+                              fetchPostsByStatus("archived");
+                              setIsStatusOpen(false);
+                              navigate(`?status=archived`);
+                            }}
+                            className="w-full text-left block px-4 py-2 hover:bg-gray-100"
                           >
                             Archived
-                          </Link>
-                        </li> */}
+                          </button>
+                        </li>
                       </ul>
                     </div>
                   )}
                 </div>
 
+                <Link
+                  type="button"
+                  to={"/userdata"}
+                  className="text-white flex items-center text-center gap-2 lg:gap-3 font-medium rounded-lg text-xs px-2 py-1.5 lg:text-sm lg:px-4 lg:py-2.5 bg-sky-800 hover:bg-sky-700 focus:outline-none focus:ring-1 focus:ring-blue-800"
+                >
+                  User Data
+                </Link>
+
                 <div className="relative">
                   <Link
                     to="/create"
-                    className="text-white flex items-center text-center gap-2 lg:gap-3 font-medium rounded-lg text-xs px-2 py-1.5 lg:text-sm lg:px-4 lg:py-2.5 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-800"
+                    className="text-white flex items-center text-center gap-2 lg:gap-3 font-medium rounded-lg text-xs px-2 py-1.5 lg:text-sm lg:px-4 lg:py-2.5 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-800"
                   >
                     <FaPlus />
                     Create New Post
@@ -297,7 +447,7 @@ const AllPosts = () => {
         </div>
 
         {/* Posts Grid */}
-        <div className="p-5 flex flex-col gap-5 items-center mb-2">
+        <div className="p-5 flex flex-col gap-5 items-stretch mb-2">
           {loading ? (
             <p className="text-gray-400 text-center">Loading posts...</p>
           ) : (
@@ -306,58 +456,111 @@ const AllPosts = () => {
                 posts.map((post, index) => (
                   <div
                     key={post.id}
-                     onClick={() => DisplayDeatils(post.id)}
-                    className="relative bg-white shadow rounded-lg p-4"
+                    onClick={() => DisplayDeatils(post.id)}
+                    className="relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden cursor-pointer flex flex-col"
                   >
+                    {/* Delete Icon */}
                     <RiDeleteBin6Line
-                      onClick={async () => {
-                         e.stopPropagation()
+                      onClick={async (e) => {
+                        e.stopPropagation();
                         await deletePost(post.id);
                       }}
-                      className=" absolute top-2 right-2 text-red-600 cursor-pointer hover:text-red-700"
+                      className=" absolute top-3 right-3 bg-white p-1 rounded-full shadow-md text-red-600 hover:text-red-700 hover:bg-gray-100 text-2xl transition-colors duration-200"
                     />
-                    <h2 className="text-lg font-semibold text-blue-800 mb-2 line-clamp-2">
-                      {post.title.length > 60
-                        ? `${post.title.slice(0, 60)}...`
-                        : post.title}
-                    </h2>
-                    <p className="text-gray-600 mb-1">
-                      Created:{" "}
-                      {new Date(post.created_at).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </p>
-                    <div className="flex justify-between gap-3 items-center">
-                      <div className="flex items-center gap-1 ">
-                        <p className="text-sm">Status:</p>
-                        <p
-                          className={`${getStatusColor(
+
+                    {/* Image */}
+                    {post.image_url && (
+                      <img
+                        src={`https://twincles.mavenerp.in/api/storage/app/public/${post.image_url}`}
+                        alt="Blog Post"
+                        className="w-full h-48 object-cover"
+                      />
+                    )}
+
+                    {/* Card Body */}
+                    <div className="p-5 flex flex-col flex-grow">
+                      {/* Title */}
+                      <h2 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                        {post.title.length > 60
+                          ? `${post.title.slice(0, 60)}...`
+                          : post.title}
+                      </h2>
+
+                      {/* Created Date */}
+                      <p className="text-sm text-gray-500 mb-3">
+                        Created:{" "}
+                        {new Date(post.created_at).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </p>
+
+                      {/* Status Badge */}
+                      <div className="mb-4">
+                        <span
+                          className={`px-3 py-1 text-xs font-semibold rounded-full ${getStatusColor(
                             post.status
-                          )} text-gray-600 text-sm font-bold `}
+                          )}`}
                         >
-                          {" "}
                           {post.status.toUpperCase()}
-                        </p>
+                        </span>
                       </div>
 
-                      <div className="flex justify-between gap-2 items-center mt-2">
-                        <button
-                          onClick={(e) => {e.stopPropagation();  updatePost(post.id)} }
-                          className="text-sm px-3 py-1 bg-sky-700 text-white rounded hover:bg-blue-700"
-                        >
-                          Update
-                        </button>
+                      {/* Action Buttons */}
+                      <div className="mt-auto flex flex-wrap gap-2">
+                        {(post.status === "published" ||
+                          post.status === "draft") && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              updatePost(post.id);
+                            }}
+                            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors duration-200"
+                          >
+                            Update
+                          </button>
+                        )}
+
                         <button
                           onClick={(e) => {
-                              e.stopPropagation();
-                              archivePost(post.id);
-                            }}
-                          className="text-sm px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                            e.stopPropagation();
+                            post.status === "archived"
+                              ? restorePost(post.id)
+                              : archivePost(post.id);
+                          }}
+                          className={`px-4 py-2 text-white text-sm rounded-lg transition-colors duration-200 ${
+                            post.status === "archived"
+                              ? "bg-green-600 hover:bg-green-700"
+                              : "bg-yellow-500 hover:bg-yellow-600"
+                          }`}
                         >
-                          Archive
+                          {post.status === "archived" ? "Restore" : "Archive"}
                         </button>
+
+                        {post.status === "published" && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              unpublishPost(post.id);
+                            }}
+                            className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white text-sm rounded-lg transition-colors duration-200"
+                          >
+                            Unpublish
+                          </button>
+                        )}
+
+                        {post.status === "draft" && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              publishPost(post.id);
+                            }}
+                            className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors duration-200"
+                          >
+                            Publish
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -374,7 +577,7 @@ const AllPosts = () => {
         </div>
 
         {/* PageNation buttons */}
-        <div className="flex justify-center gap-3 items-center mt-3 mb-1">
+        <div className="flex justify-center items-center gap-3 mt-3 mb-1">
           <button
             onClick={handlePrev}
             disabled={page === 1}

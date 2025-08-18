@@ -100,22 +100,22 @@ const ViewBlog = () => {
       <div className="flex justify-between items-center px-6 py-3 bg-[#0072CE] shadow-sm rounded-2xl">
         <Link
           to="/post"
-          className="flex items-center gap-2 text-white hover:text-gray-300 text-sm font-medium"
+          className="flex items-center gap-2 text-white hover:text-gray-300 text-xs md:text-sm font-medium"
         >
           <FaArrowLeft />
           <span>Back to Blog Post</span>
         </Link>
-        <div className="flex flex-wrap justify-end gap-3  border-gray-200">
+        <div className="flex  justify-end gap-3  border-gray-200">
           <button
             onClick={async () => {
               await archivePost(post.id);
             }}
             type="button"
             disabled={isArchiving}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium transition ${
+            className={`flex items-center gap-2 p-1 md:px-5 md:py-2.5 rounded-lg text-xs md:text-sm font-medium transition ${
               isArchiving
                 ? "bg-blue-300 text-blue-100 cursor-not-allowed"
-                : "text-blue-600 bg-blue-200 hover:bg-blue-300"
+                : "text-white bg-amber-500 hover:bg-amber-600"
             }`}
           >
             {isArchiving ? (
@@ -131,7 +131,7 @@ const ViewBlog = () => {
               await deletePost(post.id);
             }}
             type="button"
-            className="text-white bg-red-600 hover:bg-red-700 px-5 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition"
+            className="text-white bg-red-600 hover:bg-red-700 border-0 p-1 md:px-5 md:py-2.5 rounded-lg text-sm md:text-sm font-medium flex items-center gap-2 transition"
           >
             <RiDeleteBin6Line />
             Delete
@@ -139,7 +139,7 @@ const ViewBlog = () => {
           <button
             onClick={() => updatePost(post.id)}
             type="button"
-            className="text-white bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 transition"
+            className="text-white bg-blue-600 hover:bg-blue-700 p-1  md:px-5 md:py-2.5 rounded-lg text-xs md:text-sm font-medium flex items-center md:gap-2 transition"
           >
             <TbEdit />
             Edit Post
@@ -175,10 +175,19 @@ const ViewBlog = () => {
                 </p>
               </div>
 
+              {/* Blog Image (if present) */}
+              {post.image_url && (
+                <img
+                  src={`https://twincles.mavenerp.in/api/storage/app/public/${post.image_url}`}
+                  alt={post.title}
+                  className="w-full max-h-[400px] object-cover rounded-lg mb-6 shadow-md"
+                />
+              )}
+
               {/* Blog Content */}
               <div
-                className=" prose max-w-none prose-headings:font-semibold prose-p:leading-relaxed prose-a:text-blue-600 prose-a:underline"
-                dangerouslySetInnerHTML={{ __html: post.content }} // this is to get data from text editor
+                className="prose max-w-none prose-headings:font-semibold prose-p:leading-relaxed prose-a:text-blue-600 prose-a:underline"
+                dangerouslySetInnerHTML={{ __html: post.content }}
               />
             </div>
           )}

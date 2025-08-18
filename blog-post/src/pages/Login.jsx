@@ -41,8 +41,8 @@ const Login = () => {
 
       if (response.data.token) {
         toast.success("Login successful");
-        login(response.data.token, response.data.user); // ✅ Correct use
-        navigate("/post", { replace: true }); // ✅ Post-login route
+        login(response.data.token, response.data.user); 
+        navigate("/post", { replace: true }); 
       } else {
         toast.error(response.data.message || "Login failed");
       }
@@ -59,7 +59,7 @@ const Login = () => {
   };
 
   return (
-   <div className="min-h-screen flex justify-center items-center bg-gradient-to-r from-blue-700 to-purple-600 px-4">
+   <div className="min-h-screen flex justify-center items-center bg-gradient-to-r from-sky-800 to-sky-500 px-4">
   <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white rounded-2xl shadow-lg overflow-hidden">
     
     {/* Image Section - edge to edge */}
@@ -67,12 +67,12 @@ const Login = () => {
       <img
         src={loginImage}
         alt="Login Illustration"
-        className="w-full h-full object-cover shadow-2xl md:shadow-[20px_0px_40px_-10px_rgba(0,0,0,0.4)] shadow-purple-500 "
+        className="w-full h-full object-cover shadow-2xl md:shadow-[20px_0px_40px_-10px_rgba(0,0,0,0.4)] shadow-sky-500 "
       />
     </div>
 
     {/* Form Section */}
-    <div className="w-full md:w-1/2 p-8 md:p-12 bg-gradient-to-l from-blue-300 to-purple-500   ">
+    <div className="w-full md:w-1/2 p-8 md:p-12 bg-gradient-to-l from-sky-600 to-sky-500   ">
       <h2 className="text-2xl font-semibold text-white mb-6 text-center ">
         Login to Your Account
       </h2>
@@ -93,7 +93,7 @@ const Login = () => {
             value={formData.email}
             onChange={handlechange}
             placeholder="you@example.com"
-            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none transition text-sm bg-gray-50"
+            className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-sky-500 focus:outline-none transition text-sm bg-gray-50"
             required
           />
         </div>
@@ -126,7 +126,7 @@ const Login = () => {
             className={`w-full text-white text-sm font-medium py-2 rounded-lg transition ${
               isSubmitting
                 ? 'bg-blue-400 cursor-not-allowed'
-                : 'bg-blue-600 hover:bg-blue-700'
+                : 'bg-sky-800 hover:bg-[#1c2e6a]'
             }`}
           >
             {isSubmitting ? "Logging in..." : "Login"}

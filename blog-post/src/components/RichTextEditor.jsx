@@ -204,7 +204,7 @@ const RichTextEditor = ({ content, onChange }) => {
         </button>
 
         {/* Image Upload */}
-        <label className="p-1 px-2 rounded hover:bg-gray-100 cursor-pointer" title="Insert Image">
+        {/* <label className="p-1 px-2 rounded hover:bg-gray-100 cursor-pointer" title="Insert Image">
           🖼️
           <input
             type="file"
@@ -221,7 +221,7 @@ const RichTextEditor = ({ content, onChange }) => {
               reader.readAsDataURL(file);
             }}
           />
-        </label>
+        </label> */}
 
       </div>
 

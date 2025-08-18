@@ -100,7 +100,7 @@ const UserData = () => {
         </div>
       </div>
 
-      <div className="p-3 mt-2">
+      {/* <div className="p-3 mt-2">
         <div className="border border-gray-300 w-full p-4 rounded-2xl bg-gray-100 mt-5 ">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <form className="w-full lg:w-[500px]">
@@ -133,7 +133,7 @@ const UserData = () => {
           
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className="relative overflow-x-auto mt-6 px-4">
         <table className="w-full text-sm text-left text-gray-600 bg-gray-2 shadow rounded-xl">

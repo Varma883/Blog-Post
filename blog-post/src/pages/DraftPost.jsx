@@ -185,10 +185,10 @@ const DraftPost = () => {
 
         {/* Filters and Search */}
         <div className="p-3 mt-2">
-          <div className="border border-gray-300 w-full p-4 rounded-2xl bg-gray-100">
+          <div className="border border-gray-300 bg-amber-400 w-full p-4 rounded-2xl ">
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               {/* Search Bar */}
-              <form className="w-full lg:w-[500px]">
+              <form className="w-full lg:w-[500px] ">
                 <label htmlFor="default-search" className="sr-only">
                   Search
                 </label>
@@ -213,7 +213,7 @@ const DraftPost = () => {
                   <input
                     type="search"
                     id="default-search"
-                    className="block w-full p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+                    className="block w-full p-2 ps-10 text-sm text-gray-900  rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Search posts..."
                     required
                   />
@@ -227,7 +227,7 @@ const DraftPost = () => {
                   <button
                     type="button"
                     onClick={() => setIsStatusOpen((prev) => !prev)}
-                    className="text-gray-900 border border-gray-300 bg-gray-50 focus:ring-gray-400 focus:border-gray-400 font-medium rounded-lg text-[10px] lg:text-sm px-3 py-2 inline-flex items-center"
+                    className="text-white  border-red-800  bg-red-600 focus:ring-gray-400 focus:border-gray-400 font-medium rounded-lg text-[10px] lg:text-sm px-3 py-2 inline-flex items-center"
                   >
                     All Statuses
                     <svg
@@ -252,15 +252,6 @@ const DraftPost = () => {
                       <ul className="py-2 text-sm text-gray-700">
                         <li>
                           <Link
-                            to={"/post"}
-                            href="#"
-                            className="block px-4 py-2 hover:bg-gray-100"
-                          >
-                            All Posts
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
                             to={"/published"}
                             href="#"
                             className="block px-4 py-2 hover:bg-gray-100"
@@ -268,25 +259,41 @@ const DraftPost = () => {
                             Published
                           </Link>
                         </li>
-
-                        {/* <li>
+                        <li>
                           <Link
-                            to={"/archive"}
+                            to={"/draft"}
                             href="#"
                             className="block px-4 py-2 hover:bg-gray-100"
                           >
-                            Archived
+                            Draft
                           </Link>
-                        </li> */}
+                        </li>
+                        {/* <li>
+                                                  <Link
+                                                    to={"/archive"}
+                                                    href="#"
+                                                    className="block px-4 py-2 hover:bg-gray-100"
+                                                  >
+                                                    Archived
+                                                  </Link>
+                                                </li> */}
                       </ul>
                     </div>
                   )}
                 </div>
 
+                <Link
+                  to={"/userdata"}
+                  type="button"
+                  className="text-white flex items-center text-center gap-2 lg:gap-3 font-medium rounded-lg text-xs px-2 py-1.5 lg:text-sm lg:px-4 lg:py-2.5 bg-sky-800 hover:bg-sky-700 focus:outline-none focus:ring-1 focus:ring-blue-800"
+                >
+                  User Data
+                </Link>
+
                 <div className="relative">
                   <Link
                     to="/create"
-                    className="text-white flex items-center text-center gap-2 lg:gap-3 font-medium rounded-lg text-xs px-2 py-1.5 lg:text-sm lg:px-4 lg:py-2.5 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-800"
+                    className="text-white flex items-center text-center gap-2 lg:gap-3 font-medium rounded-lg text-xs px-2 py-1.5 lg:text-sm lg:px-4 lg:py-2.5 bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-800"
                   >
                     <FaPlus />
                     Create New Post
